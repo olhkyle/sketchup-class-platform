@@ -13,6 +13,8 @@ export default async function WipPage() {
             src={addImage}
             alt="add complete"
             className="block w-full h-full"
+            loading="lazy"
+            placeholder="blur"
           />
         </div>
         <Button>
