@@ -1,8 +1,11 @@
+type Course = (typeof courses)[number];
+
 const courses = [
-  "2025년 4 ~ 5월",
-  "2025년 2 ~ 3월",
-  "2024년 12월 ~ 2025년 1월",
-  "2024년 10 ~ 11월",
+  "2025.04 ~ 05",
+  "2025.02 ~ 03",
+  "2024.12 ~ 2025.01",
+  "2024.10 ~ 11",
 ] as const;
 
+export type { Course };
 export { courses };

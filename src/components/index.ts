@@ -1,5 +1,4 @@
+export * from "./layout";
+export * from "./loader";
 export * from "./ui";
-
-export { default as Nav } from "./Nav";
-export { default as Main } from "./Main";
-export { default as Footer } from "./Footer";
+export * from "./register";

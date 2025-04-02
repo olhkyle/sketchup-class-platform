@@ -1,7 +1,7 @@
 "use client";
 
-import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -9,36 +9,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Button } from "./ui";
-import { Input } from "./ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
+  Button,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { courses } from "@/constants/courses";
+} from "../ui";
 import { toast } from "sonner";
-
-const formSchema = z.object({
-  course: z.string({
-    required_error: "선택해 주세요",
-  }),
-  username: z
-    .string()
-    .min(2, { message: "최소 2글자 이상 입력해 주세요" })
-    .max(4),
-  email: z
-    .string({ required_error: "이메일을 입력해 주세요" })
-    .email({ message: "이메일 형식이 올바르지 않습니다" }),
-});
+import { addStudent } from "@/supabase/api/students";
+import { useLoading } from "@/hooks";
+import { courses } from "@/constants/courses";
+import { registerFormSchema, RegisterFormSchema } from "./schema";
+import { useRouter } from "next/navigation";
+import { routes } from "@/constants/routes";
 
 export default function RegisterForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const router = useRouter();
+  const form = useForm<RegisterFormSchema>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
       course: courses[0],
       username: "",
@@ -46,25 +36,28 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const { startTransition, isLoading, Loading } = useLoading();
+
+  const onSubmit = async (values: RegisterFormSchema) => {
     const today = new Date().toISOString().slice(0, 10);
 
     try {
-      console.log(values);
+      await startTransition(addStudent(values));
+
       toast("✅ 성공적으로 등록되었습니다", {
         description: today,
       });
+
+      router.push(routes.WIP);
     } catch (e) {
       console.error(e);
+      toast("⚠️ 문제가 발생하였습니다.");
     }
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-20 space-y-10 sm:w-2/4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="py-48 space-y-8">
         <h2 className="text-lg font-bold">📋 수업자료 공유를 위한 등록</h2>
         <FormField
           control={form.control}
@@ -128,8 +121,9 @@ export default function RegisterForm() {
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full font-semibold cursor-pointer">
-          제출하기
+          {isLoading ? Loading() : "제출하기"}
         </Button>
       </form>
     </Form>

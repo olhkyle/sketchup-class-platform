@@ -1,9 +1,9 @@
-import RegisterForm from "@/components/RegisterForm";
+import RegisterForm from "@/components/register/RegisterForm";
 
-export default async function page() {
+export default async function RegisterPage() {
   return (
-    <div className="flex justify-center items-center mx-auto p-4 h-[calc(100dvh-144px)]">
+    <section className="flex justify-center items-center mx-auto px-4">
       <RegisterForm />
-    </div>
+    </section>
   );
 }
